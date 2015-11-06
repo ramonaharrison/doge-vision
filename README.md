@@ -8,4 +8,4 @@ Android app that turns camera photos into Doge memes. It uses a computer vision 
 
 Clone, import to Android Studio using build.gradle, compile and run.
 
-IMPORTANT: you must insert a Camfinder API key from mashape.com on line 49 of MainActivity.java.
+IMPORTANT: you must insert a [Camfind API key from mashape.com](https://market.mashape.com/imagesearcher/camfind) on line 49 of MainActivity.java.
