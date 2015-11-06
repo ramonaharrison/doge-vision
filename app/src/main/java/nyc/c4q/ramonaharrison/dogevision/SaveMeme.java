@@ -13,23 +13,18 @@ import java.io.OutputStream;
 public class SaveMeme {
 
     public Bitmap loadBitmapFromView(FrameLayout view) {
-
         view.setDrawingCacheEnabled(true);
-
         view.buildDrawingCache();
-
         Bitmap bm = view.getDrawingCache();
-
         return bm;
     }
 
     public String saveMeme(Bitmap bm, String imgName, ContentResolver c) {
-
         OutputStream fOut = null;
         String strDirectory = Environment.getExternalStorageDirectory().toString();
         String pathBm = "";
-
         File f = new File(strDirectory, imgName);
+
         try {
             fOut = new FileOutputStream(f);
 
@@ -45,7 +40,6 @@ public class SaveMeme {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return pathBm;
     }
 }

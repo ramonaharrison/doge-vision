@@ -46,7 +46,7 @@ import butterknife.OnTouch;
 public class MainActivity extends ActionBarActivity {
 
     // TODO: you must add mashape API key here before compiling
-    private final String mashape_key = "cGsl2kc7rBmshwL6R0AIXUnONyBDp19n2LzjsnWhosH4D5c2ey";
+    private final String mashape_key = "";
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String PHOTO = "photoUri";
@@ -55,13 +55,20 @@ public class MainActivity extends ActionBarActivity {
     private boolean editMode;
     private FrameLayout.LayoutParams layoutParams;
 
-    @Bind(R.id.meme) FrameLayout meme;
-    @Bind(R.id.root) ViewGroup rootLayout;
-    @Bind(R.id.progressBar) ProgressBar progressBar;
-    @Bind(R.id.dogeView) ImageView dogeView;
-    @Bind(R.id.photoView) ImageView photoView;
-    @Bind(R.id.fab) FloatingActionButton cameraButton;
-    @Bind({ R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText }) List<TextView> dogeText;
+    @Bind(R.id.meme)
+    FrameLayout meme;
+    @Bind(R.id.root)
+    ViewGroup rootLayout;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.dogeView)
+    ImageView dogeView;
+    @Bind(R.id.photoView)
+    ImageView photoView;
+    @Bind(R.id.fab)
+    FloatingActionButton cameraButton;
+    @Bind({R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText})
+    List<TextView> dogeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +107,9 @@ public class MainActivity extends ActionBarActivity {
                 startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         }
-
     }
 
-    @OnTouch({ R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText })
+    @OnTouch({R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText})
     public boolean onDogeTextTouch(View view, MotionEvent event) {
         touchX = (int) event.getRawX();
         touchY = (int) event.getRawY();
@@ -208,12 +214,12 @@ public class MainActivity extends ActionBarActivity {
             }
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     static final ButterKnife.Setter<TextView, Typeface> SETFONT = new ButterKnife.Setter<TextView, Typeface>() {
-        @Override public void set(TextView view, Typeface font, int index) {
+        @Override
+        public void set(TextView view, Typeface font, int index) {
             view.setTypeface(font);
         }
     };
@@ -303,11 +309,6 @@ public class MainActivity extends ActionBarActivity {
 
     public class AsyncGoFetchMessage extends AsyncTask<String, Void, String> {
 
-        /**
-         * The system calls this to perform work in a worker thread and
-         * delivers it the parameters given to AsyncTask.execute()
-         */
-
         protected String doInBackground(String... imageUris) {
 
             try {
@@ -336,23 +337,19 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
-        /**
-         * The system calls this to perform work in the UI thread and delivers
-         * the result from doInBackground()
-         */
         protected void onPostExecute(String description) {
 
-        String dogeTalk[] = {"such", "so", "many", "wow", "very"};
-        String dogeFiller[] = {"nice", "artist", "wonder", "photo", "majesty"};
-        String words[] = description.split(" ");
-        int i;
-        for (i = 0; i < words.length && i < dogeText.size(); i++) {
-            dogeText.get(i).setText(dogeTalk[i] + " " + words[i]);
-        }
-        while (i < dogeText.size()) {
-            dogeText.get(i).setText(dogeTalk[i] + " " + dogeFiller[i]);
-            i++;
-        }
+            String dogeTalk[] = {"such", "so", "many", "wow", "very"};
+            String dogeFiller[] = {"nice", "majesty", "wonder", "photo", "artist"};
+            String words[] = description.split(" ");
+            int i;
+            for (i = 0; i < words.length && i < dogeText.size(); i++) {
+                dogeText.get(i).setText(dogeTalk[i] + " " + words[i]);
+            }
+            while (i < dogeText.size()) {
+                dogeText.get(i).setText(dogeTalk[i] + " " + dogeFiller[i]);
+                i++;
+            }
             progressBar.setVisibility(View.INVISIBLE);
             editMode = true;
         }
@@ -371,7 +368,6 @@ public class MainActivity extends ActionBarActivity {
             } finally {
                 reader.close();
             }
-
         }
 
         public DescriptionMessage readDescriptionMessage(JsonReader reader) throws IOException {
@@ -397,7 +393,6 @@ public class MainActivity extends ActionBarActivity {
             return new DescriptionMessage(status, name, reason);
         }
     }
-
 }
 
 
