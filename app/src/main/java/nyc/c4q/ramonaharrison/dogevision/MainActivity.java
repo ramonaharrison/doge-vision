@@ -46,7 +46,7 @@ import butterknife.OnTouch;
 public class MainActivity extends ActionBarActivity {
 
     // TODO: you must add mashape API key here before compiling
-    private final String mashape_key = "cGsl2kc7rBmshwL6R0AIXUnONyBDp19n2LzjsnWhosH4D5c2ey";
+    private final String mashape_key = "API KEY GOES HERE!";
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static final String PHOTO = "photoUri";
