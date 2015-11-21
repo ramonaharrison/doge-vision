@@ -46,14 +46,20 @@ import butterknife.OnTouch;
 public class MainActivity extends ActionBarActivity {
 
     // TODO: you must add mashape API key here before compiling
-    private final String mashape_key = "";
-    
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final String MASHAPE_KEY = "cGsl2kc7rBmshwL6R0AIXUnONyBDp19n2LzjsnWhosH4D5c2ey";
     private static final String PHOTO = "photoUri";
-    private Uri photoUri;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static final ButterKnife.Setter<TextView, Typeface> SETFONT = new ButterKnife.Setter<TextView, Typeface>() {
+        @Override
+        public void set(TextView view, Typeface font, int index) {
+            view.setTypeface(font);
+        }
+    };
+
     private int touchX, touchY, deltaX, deltaY;
-    private boolean editMode;
     private FrameLayout.LayoutParams layoutParams;
+    private boolean editMode;
+    private Uri photoUri;
 
     @Bind(R.id.meme)
     FrameLayout meme;
@@ -70,18 +76,17 @@ public class MainActivity extends ActionBarActivity {
     @Bind({R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText})
     List<TextView> dogeText;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Typeface comic_sans = Typeface.createFromAsset(getAssets(), "ComicSans.ttf");
-        ButterKnife.apply(dogeText, SETFONT, comic_sans);
+        initializeUi();
         editMode = false;
-        Picasso.with(this).load(R.drawable.doge).into(dogeView);
-        progressBar.setVisibility(View.INVISIBLE);
 
         if (savedInstanceState != null) {
+            // If there is a savedInstanceState, recover the
             photoUri = savedInstanceState.getParcelable(PHOTO);
             if (photoUri != null) {
                 Picasso.with(this).load(new File(photoUri.toString())).into(photoView);
@@ -90,24 +95,75 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+
+    /**
+     * Sets up the UI: applies typeface assets to the meme TextViews,
+     * loads Doge image into the dogeView, hides the progress bar.
+     */
+
+    private void initializeUi() {
+        Typeface comic_sans = Typeface.createFromAsset(getAssets(), "ComicSans.ttf");
+        ButterKnife.apply(dogeText, SETFONT, comic_sans);
+        Picasso.with(this).load(R.drawable.doge).into(dogeView);
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+
+
+    /**
+     * Binds an onClickListener to the camera FAB. When the button is clicked,
+     * a new file is created, the Uri is saved, and an intent is launched
+     * to retrieve a photo from the camera.
+     */
+
     @OnClick(R.id.fab)
     public void launchCamera() {
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create a file to store the image.
+
             File photoFile = null;
             try {
                 photoFile = createImageFile();
                 photoUri = (Uri.parse(photoFile.getAbsolutePath()));
             } catch (IOException ex) {
+                Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
             }
+
             if (photoFile != null) {
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
         }
     }
+
+
+    /**
+     * Returns a temporary file that will be used to store the image returned from the camera intent.
+     *
+     * @return the temp file for storing the image
+     */
+
+    private File createImageFile() throws IOException {
+
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+
+        File image = File.createTempFile(
+                imageFileName,                      /* prefix */
+                ".jpg",                             /* suffix */
+                externalStoragePublicDirectory      /* directory */
+        );
+
+        return image;
+    }
+
+
+    /**
+     * Binds an onTouchListener to the meme TextViews. When a TextView is touched/dragged,
+     * the XY touch coordinates are retrieved and the TextView's layoutParams are updated
+     * to reposition the view.
+     */
 
     @OnTouch({R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText})
     public boolean onDogeTextTouch(View view, MotionEvent event) {
@@ -136,33 +192,30 @@ public class MainActivity extends ActionBarActivity {
         return true;
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-        return image;
-    }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    /**
+     * Binds an onTouchListener to the meme TextViews. When a TextView is touched/dragged,
+     * the XY touch coordinates are retrieved and the TextView's layoutParams are updated
+     * to reposition the view.
+     */
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+
             if (resultCode == RESULT_OK && data != null) {
 
-                // Image capture successful
+                // The image capture was successful. Iterate through the TextViews to clear any strings left over from previous memes.
                 int i = 0;
                 while (i < dogeText.size()) {
                     dogeText.get(i).setText("");
                     i++;
                 }
+
+                // Load the image captured from the camera into the photoView.
                 Picasso.with(this).load(new File(photoUri.toString())).into(photoView);
 
-                //Show progress bar
+                // Unhide the progress bar while work is being done on an async task.
                 progressBar.setVisibility(View.VISIBLE);
 
                 // Start async task to upload image, retrieve token + message
@@ -170,11 +223,15 @@ public class MainActivity extends ActionBarActivity {
                 goFetch.execute(photoUri.toString());
 
             } else if (resultCode == RESULT_CANCELED) {
+
                 // User cancelled the image capture
                 Toast.makeText(this, "Camera capture cancelled.", Toast.LENGTH_LONG).show();
+
             } else {
+
                 // Image capture failed, advise user
-                Toast.makeText(this, "Camera capture failed.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
+
             }
         }
     }
@@ -197,8 +254,12 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_share) {
+            // The share button is clicked.
             if (editMode) {
+
+                // If there is a meme to save, hide the camera button and take a screenshot to capture the meme.
                 // TODO: should be moved off the UI thread!
+
                 cameraButton.setVisibility(View.INVISIBLE);
                 SaveMeme sm = new SaveMeme();
                 Bitmap bitmap = sm.loadBitmapFromView(meme);
@@ -210,26 +271,24 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(attachIntent);
                 cameraButton.setVisibility(View.VISIBLE);
             } else {
-                Toast.makeText(this, "Such empty canvas", Toast.LENGTH_SHORT).show();
+                // There isn't a meme to save yet
+                Toast.makeText(this, "Such empty canvas.", Toast.LENGTH_SHORT).show();
             }
+
             return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
-    static final ButterKnife.Setter<TextView, Typeface> SETFONT = new ButterKnife.Setter<TextView, Typeface>() {
-        @Override
-        public void set(TextView view, Typeface font, int index) {
-            view.setTypeface(font);
-        }
-    };
+
+    /**
+     * AsyncGoFetchToken: an AsyncTask to
+     * delivers it the parameters given to AsyncTask.execute()
+     */
+
 
     public class AsyncGoFetchToken extends AsyncTask<String, Void, String> {
-
-        /**
-         * The system calls this to perform work in a worker thread and
-         * delivers it the parameters given to AsyncTask.execute()
-         */
 
         protected String doInBackground(String... imageUris) {
 
@@ -248,7 +307,7 @@ public class MainActivity extends ActionBarActivity {
         private String requestImageDescription(String filepath) throws UnirestException, IOException {
             // These code snippets use an open-source library. http://unirest.io/java
             HttpResponse<InputStream> tokenResponse = Unirest.post("https://camfind.p.mashape.com/image_requests")
-                    .header("X-Mashape-Key", mashape_key)
+                    .header("X-Mashape-Key", MASHAPE_KEY)
                     .field("image_request[image]", new File(filepath))
                     .field("image_request[locale]", "en_US").asBinary();
 
@@ -258,26 +317,36 @@ public class MainActivity extends ActionBarActivity {
 
         }
 
+
         /**
          * The system calls this to perform work in the UI thread and delivers
          * the result from doInBackground()
          */
+
         protected void onPostExecute(String token) {
             startDelay(token);
-
         }
 
-        public String extractTokenFromJsonStream(InputStream in) throws IOException {
+
+        /**
+         *
+         */
+
+        private String extractTokenFromJsonStream(InputStream in) throws IOException {
             JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
             try {
                 return readTokenMessage(reader);
             } finally {
                 reader.close();
             }
-
         }
 
-        public String readTokenMessage(JsonReader reader) throws IOException {
+
+        /**
+         *
+         */
+
+        private String readTokenMessage(JsonReader reader) throws IOException {
             String token = "";
 
             reader.beginObject();
@@ -292,6 +361,11 @@ public class MainActivity extends ActionBarActivity {
             reader.endObject();
             return token;
         }
+
+
+        /**
+         *
+         */
 
         private void startDelay(String token) {
             final String theToken = token;
@@ -325,10 +399,10 @@ public class MainActivity extends ActionBarActivity {
 
         private String requestImageDescription(String token) throws UnirestException, IOException {
 
-            String responseUrl = "https://camfind.p.mashape.com/image_responses/" + token;
             // These code snippets use an open-source library. http://unirest.io/java
+            String responseUrl = "https://camfind.p.mashape.com/image_responses/" + token;
             HttpResponse<InputStream> response = Unirest.get(responseUrl)
-                    .header("X-Mashape-Key", mashape_key)
+                    .header("X-Mashape-Key", MASHAPE_KEY)
                     .header("Accept", "application/json")
                     .asBinary();
 
@@ -336,6 +410,15 @@ public class MainActivity extends ActionBarActivity {
             return description;
 
         }
+
+        /**
+         * This method always returns immediately, whether or not the
+         * image exists. When this applet attempts to draw the image on
+         * the screen, the data will be loaded. The graphics primitives
+         * that draw the image will incrementally paint on the screen.
+         *
+         * @param description an absolute URL giving the base location of the image
+         */
 
         protected void onPostExecute(String description) {
 
@@ -354,8 +437,10 @@ public class MainActivity extends ActionBarActivity {
             editMode = true;
         }
 
-        public String extractDescriptionFromJsonStream(InputStream in) throws IOException {
+
+        private String extractDescriptionFromJsonStream(InputStream in) throws IOException {
             JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
+
             try {
                 DescriptionMessage message = readDescriptionMessage(reader);
                 if (message.getStatus().equals("completed")) {
@@ -368,14 +453,17 @@ public class MainActivity extends ActionBarActivity {
             } finally {
                 reader.close();
             }
+
         }
 
-        public DescriptionMessage readDescriptionMessage(JsonReader reader) throws IOException {
+        private DescriptionMessage readDescriptionMessage(JsonReader reader) throws IOException {
+
             String status = "";
             String name = "";
             String reason = "";
 
             reader.beginObject();
+
             while (reader.hasNext()) {
                 String field = reader.nextName();
                 if (field.equals("status")) {
@@ -390,6 +478,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
             reader.endObject();
+
             return new DescriptionMessage(status, name, reason);
         }
     }

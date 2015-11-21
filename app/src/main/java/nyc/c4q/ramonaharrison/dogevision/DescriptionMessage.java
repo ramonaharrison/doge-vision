@@ -4,6 +4,7 @@ package nyc.c4q.ramonaharrison.dogevision;
  * Created by Ramona Harrison
  * on 6/14/15.
  */
+
 public class DescriptionMessage {
     private String status;
     private String name;

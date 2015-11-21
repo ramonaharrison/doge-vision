@@ -15,31 +15,32 @@ public class SaveMeme {
     public Bitmap loadBitmapFromView(FrameLayout view) {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
-        Bitmap bm = view.getDrawingCache();
-        return bm;
+        return view.getDrawingCache();
     }
 
-    public String saveMeme(Bitmap bm, String imgName, ContentResolver c) {
-        OutputStream fOut = null;
-        String strDirectory = Environment.getExternalStorageDirectory().toString();
-        String pathBm = "";
-        File f = new File(strDirectory, imgName);
+    public String saveMeme(Bitmap bitmap, String name, ContentResolver contentResolver) {
+
+        OutputStream outputStream;
+        String directory = Environment.getExternalStorageDirectory().toString();
+        String path = "";
+        File file = new File(directory, name);
 
         try {
-            fOut = new FileOutputStream(f);
+            outputStream = new FileOutputStream(file);
 
             // Compress image
-            bm.compress(Bitmap.CompressFormat.PNG, 85, fOut);
-            fOut.flush();
-            fOut.close();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 85, outputStream);
+            outputStream.flush();
+            outputStream.close();
 
             // Update image to gallery
-            pathBm = MediaStore.Images.Media.insertImage(c,
-                    f.getAbsolutePath(), f.getName(), f.getName());
+            path = MediaStore.Images.Media.insertImage(contentResolver,
+                    file.getAbsolutePath(), file.getName(), file.getName());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return pathBm;
+
+        return path;
     }
 }

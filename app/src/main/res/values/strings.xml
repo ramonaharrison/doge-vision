@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">Doge Vision</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_save">Save</string>
     <string name="action_share">Share</string>
 </resources>
