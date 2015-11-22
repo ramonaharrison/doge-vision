@@ -123,7 +123,6 @@ public class MainActivity extends ActionBarActivity
     @OnClick(R.id.fab)
     public void launchCamera()
     {
-
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null)
         {
@@ -334,7 +333,6 @@ public class MainActivity extends ActionBarActivity
 
             String token = extractTokenFromJsonStream(tokenResponse.getBody());
             return token;
-
         }
 
 
@@ -400,10 +398,8 @@ public class MainActivity extends ActionBarActivity
 
     public class AsyncGoFetchMessage extends AsyncTask<String, Void, String>
     {
-
         protected String doInBackground(String... imageUris)
         {
-
             try
             {
                 return requestImageDescription(imageUris[0]);
@@ -418,7 +414,6 @@ public class MainActivity extends ActionBarActivity
                 e.printStackTrace();
                 return null;
             }
-
         }
 
 
