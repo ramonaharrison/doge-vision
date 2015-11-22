@@ -43,7 +43,8 @@ import butterknife.OnClick;
 import butterknife.OnTouch;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+{
 
     // TODO: you must add mashape API key here before compiling
     private static final String MASHAPE_KEY = "cGsl2kc7rBmshwL6R0AIXUnONyBDp19n2LzjsnWhosH4D5c2ey";
@@ -78,17 +79,20 @@ public class MainActivity extends ActionBarActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initializeUi();
         editMode = false;
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null)
+        {
             // If there is a savedInstanceState, recover the
             photoUri = savedInstanceState.getParcelable(PHOTO);
-            if (photoUri != null) {
+            if (photoUri != null)
+            {
                 Picasso.with(this).load(new File(photoUri.toString())).into(photoView);
                 editMode = true;
             }
@@ -101,7 +105,8 @@ public class MainActivity extends ActionBarActivity {
      * loads Doge image into the dogeView, hides the progress bar.
      */
 
-    private void initializeUi() {
+    private void initializeUi()
+    {
         Typeface comic_sans = Typeface.createFromAsset(getAssets(), "ComicSans.ttf");
         ButterKnife.apply(dogeText, SETFONT, comic_sans);
         Picasso.with(this).load(R.drawable.doge).into(dogeView);
@@ -116,20 +121,24 @@ public class MainActivity extends ActionBarActivity {
      */
 
     @OnClick(R.id.fab)
-    public void launchCamera() {
+    public void launchCamera()
+    {
 
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null)
+        {
             File photoFile = null;
-            try {
+            try
+            {
                 photoFile = createImageFile();
                 photoUri = (Uri.parse(photoFile.getAbsolutePath()));
-            } catch (IOException ex) {
+            }
+            catch (IOException ex)
+            {
                 Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
             }
-
-            if (photoFile != null) {
+            if (photoFile != null)
+            {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
             }
@@ -143,18 +152,16 @@ public class MainActivity extends ActionBarActivity {
      * @return the temp file for storing the image
      */
 
-    private File createImageFile() throws IOException {
-
+    private File createImageFile() throws IOException
+    {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "DOGE_" + timeStamp + "_";
         File externalStoragePublicDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-
         File image = File.createTempFile(
                 imageFileName,                      /* prefix */
                 ".jpg",                             /* suffix */
                 externalStoragePublicDirectory      /* directory */
         );
-
         return image;
     }
 
@@ -166,10 +173,13 @@ public class MainActivity extends ActionBarActivity {
      */
 
     @OnTouch({R.id.redText, R.id.yellowText, R.id.cyanText, R.id.greenText, R.id.magentaText})
-    public boolean onDogeTextTouch(View view, MotionEvent event) {
+    public boolean onDogeTextTouch(View view, MotionEvent event)
+    {
         touchX = (int) event.getRawX();
         touchY = (int) event.getRawY();
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+        switch (event.getAction() & MotionEvent.ACTION_MASK)
+        {
             case MotionEvent.ACTION_DOWN:
                 layoutParams = (FrameLayout.LayoutParams) view.getLayoutParams();
                 deltaX = touchX - layoutParams.leftMargin;
@@ -188,6 +198,7 @@ public class MainActivity extends ActionBarActivity {
                 view.setLayoutParams(layoutParams);
                 break;
         }
+
         rootLayout.invalidate();
         return true;
     }
@@ -199,19 +210,19 @@ public class MainActivity extends ActionBarActivity {
      * to reposition the view.
      */
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-
-            if (resultCode == RESULT_OK && data != null) {
-
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE)
+        {
+            if (resultCode == RESULT_OK && data != null)
+            {
                 // The image capture was successful. Iterate through the TextViews to clear any strings left over from previous memes.
                 int i = 0;
-                while (i < dogeText.size()) {
+                while (i < dogeText.size())
+                {
                     dogeText.get(i).setText("");
                     i++;
                 }
-
                 // Load the image captured from the camera into the photoView.
                 Picasso.with(this).load(new File(photoUri.toString())).into(photoView);
 
@@ -221,41 +232,46 @@ public class MainActivity extends ActionBarActivity {
                 // Start async task to upload image, retrieve token + message
                 AsyncGoFetchToken goFetch = new AsyncGoFetchToken();
                 goFetch.execute(photoUri.toString());
-
-            } else if (resultCode == RESULT_CANCELED) {
-
+            }
+            else if (resultCode == RESULT_CANCELED)
+            {
                 // User cancelled the image capture
                 Toast.makeText(this, "Camera capture cancelled.", Toast.LENGTH_LONG).show();
-
-            } else {
-
+            }
+            else
+            {
                 // Image capture failed, advise user
                 Toast.makeText(this, "Something went wrong.", Toast.LENGTH_LONG).show();
-
             }
         }
     }
 
+
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(Bundle outState)
+    {
         super.onSaveInstanceState(outState);
         outState.putParcelable(PHOTO, photoUri);
     }
 
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == R.id.action_share) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        int id = item.getItemId();
+        if (id == R.id.action_share)
+        {
             // The share button is clicked.
-            if (editMode) {
+            if (editMode)
+            {
 
                 // If there is a meme to save, hide the camera button and take a screenshot to capture the meme.
                 // TODO: should be moved off the UI thread!
@@ -270,47 +286,51 @@ public class MainActivity extends ActionBarActivity {
                 attachIntent.setType("image/png");
                 startActivity(attachIntent);
                 cameraButton.setVisibility(View.VISIBLE);
-            } else {
+            }
+            else
+            {
                 // There isn't a meme to save yet
                 Toast.makeText(this, "Such empty canvas.", Toast.LENGTH_SHORT).show();
             }
-
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
 
     /**
-     * AsyncGoFetchToken: an AsyncTask to
-     * delivers it the parameters given to AsyncTask.execute()
+     * AsyncGoFetchToken: an AsyncTask to submit the image to the API server and fetch a token
+     * that will be used to retrieve the image description later.
      */
 
-
-    public class AsyncGoFetchToken extends AsyncTask<String, Void, String> {
-
-        protected String doInBackground(String... imageUris) {
-
-            try {
+    public class AsyncGoFetchToken extends AsyncTask<String, Void, String>
+    {
+        protected String doInBackground(String... imageUris)
+        {
+            try
+            {
                 return requestImageDescription(imageUris[0]);
-            } catch (UnirestException e) {
-                e.printStackTrace();
-                return null;
-            } catch (IOException e) {
+            }
+            catch (UnirestException e)
+            {
                 e.printStackTrace();
                 return null;
             }
-
+            catch (IOException e)
+            {
+                e.printStackTrace();
+                return null;
+            }
         }
 
-        private String requestImageDescription(String filepath) throws UnirestException, IOException {
+
+        private String requestImageDescription(String filepath) throws UnirestException, IOException
+        {
             // These code snippets use an open-source library. http://unirest.io/java
             HttpResponse<InputStream> tokenResponse = Unirest.post("https://camfind.p.mashape.com/image_requests")
                     .header("X-Mashape-Key", MASHAPE_KEY)
                     .field("image_request[image]", new File(filepath))
                     .field("image_request[locale]", "en_US").asBinary();
-
 
             String token = extractTokenFromJsonStream(tokenResponse.getBody());
             return token;
@@ -318,43 +338,32 @@ public class MainActivity extends ActionBarActivity {
         }
 
 
-        /**
-         * The system calls this to perform work in the UI thread and delivers
-         * the result from doInBackground()
-         */
-
-        protected void onPostExecute(String token) {
-            startDelay(token);
-        }
-
-
-        /**
-         *
-         */
-
-        private String extractTokenFromJsonStream(InputStream in) throws IOException {
+        private String extractTokenFromJsonStream(InputStream in) throws IOException
+        {
             JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
-            try {
+            try
+            {
                 return readTokenMessage(reader);
-            } finally {
+            } finally
+            {
                 reader.close();
             }
         }
 
 
-        /**
-         *
-         */
-
-        private String readTokenMessage(JsonReader reader) throws IOException {
+        private String readTokenMessage(JsonReader reader) throws IOException
+        {
             String token = "";
-
             reader.beginObject();
-            while (reader.hasNext()) {
+            while (reader.hasNext())
+            {
                 String name = reader.nextName();
-                if (name.equals("token")) {
+                if (name.equals("token"))
+                {
                     token = reader.nextString();
-                } else {
+                }
+                else
+                {
                     reader.skipValue();
                 }
             }
@@ -364,11 +373,14 @@ public class MainActivity extends ActionBarActivity {
 
 
         /**
-         *
+         * Once the token is received, start a 10000 ms delay. This allows time for the API server to process the image.
+         * Then, start a new AsyncTask to fetch the image description message from the server.
          */
 
-        private void startDelay(String token) {
+        protected void onPostExecute(String token)
+        {
             final String theToken = token;
+            final int delay = 10000;
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
@@ -376,29 +388,42 @@ public class MainActivity extends ActionBarActivity {
                     AsyncGoFetchMessage goFetchMessage = new AsyncGoFetchMessage();
                     goFetchMessage.execute(theToken);
                 }
-            }, 10000);
+            }, delay);
         }
-
     }
 
-    public class AsyncGoFetchMessage extends AsyncTask<String, Void, String> {
 
-        protected String doInBackground(String... imageUris) {
+    /**
+     * AsyncGoFetchMessage: an AsyncTask to return the token to the API server and fetch + parse the image
+     * description message.
+     */
 
-            try {
+    public class AsyncGoFetchMessage extends AsyncTask<String, Void, String>
+    {
+
+        protected String doInBackground(String... imageUris)
+        {
+
+            try
+            {
                 return requestImageDescription(imageUris[0]);
-            } catch (UnirestException e) {
+            }
+            catch (UnirestException e)
+            {
                 e.printStackTrace();
                 return null;
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
                 return null;
             }
 
         }
 
-        private String requestImageDescription(String token) throws UnirestException, IOException {
 
+        private String requestImageDescription(String token) throws UnirestException, IOException
+        {
             // These code snippets use an open-source library. http://unirest.io/java
             String responseUrl = "https://camfind.p.mashape.com/image_responses/" + token;
             HttpResponse<InputStream> response = Unirest.get(responseUrl)
@@ -408,75 +433,90 @@ public class MainActivity extends ActionBarActivity {
 
             String description = extractDescriptionFromJsonStream(response.getRawBody());
             return description;
-
         }
 
+
         /**
-         * This method always returns immediately, whether or not the
-         * image exists. When this applet attempts to draw the image on
-         * the screen, the data will be loaded. The graphics primitives
-         * that draw the image will incrementally paint on the screen.
-         *
-         * @param description an absolute URL giving the base location of the image
+         * The image description message is a String, typically 4 or 5 words. Split the message
+         * and concatenate each word to a piece of dogeTalk[]. If the message is short, use
+         * dogeFiller[] to patch things up.
          */
 
-        protected void onPostExecute(String description) {
-
+        protected void onPostExecute(String description)
+        {
             String dogeTalk[] = {"such", "so", "many", "wow", "very"};
             String dogeFiller[] = {"nice", "majesty", "wonder", "photo", "artist"};
             String words[] = description.split(" ");
+
             int i;
-            for (i = 0; i < words.length && i < dogeText.size(); i++) {
+            for (i = 0; i < words.length && i < dogeText.size(); i++)
+            {
                 dogeText.get(i).setText(dogeTalk[i] + " " + words[i]);
             }
-            while (i < dogeText.size()) {
+            while (i < dogeText.size())
+            {
                 dogeText.get(i).setText(dogeTalk[i] + " " + dogeFiller[i]);
                 i++;
             }
+
+            // Hide the progress bar and turn on editMode
             progressBar.setVisibility(View.INVISIBLE);
             editMode = true;
         }
 
 
-        private String extractDescriptionFromJsonStream(InputStream in) throws IOException {
+        private String extractDescriptionFromJsonStream(InputStream in) throws IOException
+        {
             JsonReader reader = new JsonReader(new InputStreamReader(in, "UTF-8"));
 
-            try {
+            try
+            {
                 DescriptionMessage message = readDescriptionMessage(reader);
-                if (message.getStatus().equals("completed")) {
+                if (message.getStatus().equals("completed"))
+                {
                     return message.toString();
-                } else {
+                }
+                else
+                {
                     Log.d("status", message.getStatus() + " " + message.getReason());
                     return "mystery enigma confuse tricky";
                 }
 
-            } finally {
+            }
+            finally
+            {
                 reader.close();
             }
-
         }
 
-        private DescriptionMessage readDescriptionMessage(JsonReader reader) throws IOException {
 
+        private DescriptionMessage readDescriptionMessage(JsonReader reader) throws IOException
+        {
             String status = "";
             String name = "";
             String reason = "";
 
             reader.beginObject();
-
-            while (reader.hasNext()) {
+            while (reader.hasNext())
+            {
                 String field = reader.nextName();
-                if (field.equals("status")) {
+                if (field.equals("status"))
+                {
                     status = reader.nextString();
-                } else if (field.equals("name")) {
+                }
+                else if (field.equals("name"))
+                {
                     name = reader.nextString();
-                } else if (field.equals("reason")) {
+                }
+                else if (field.equals("reason"))
+                {
                     reason = reader.nextString();
-                } else {
+                }
+                else
+                {
                     reader.skipValue();
                 }
             }
-
             reader.endObject();
 
             return new DescriptionMessage(status, name, reason);

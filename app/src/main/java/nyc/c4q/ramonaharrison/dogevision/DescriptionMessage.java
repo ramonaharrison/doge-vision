@@ -5,12 +5,14 @@ package nyc.c4q.ramonaharrison.dogevision;
  * on 6/14/15.
  */
 
-public class DescriptionMessage {
+public class DescriptionMessage
+{
     private String status;
     private String name;
     private String reason;
 
-    public DescriptionMessage(String status, String name, String reason) {
+    public DescriptionMessage(String status, String name, String reason)
+    {
         this.status = status;
         this.name = name;
         this.reason = reason;

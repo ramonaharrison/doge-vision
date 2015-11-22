@@ -10,22 +10,30 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-public class SaveMeme {
+public class SaveMeme
+{
 
-    public Bitmap loadBitmapFromView(FrameLayout view) {
+    /**
+     * Helper class for taking a Bitmap screenshot of the meme and saving it to the gallery.
+     */
+
+    public Bitmap loadBitmapFromView(FrameLayout view)
+    {
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         return view.getDrawingCache();
     }
 
-    public String saveMeme(Bitmap bitmap, String name, ContentResolver contentResolver) {
+    public String saveMeme(Bitmap bitmap, String name, ContentResolver contentResolver)
+    {
 
         OutputStream outputStream;
         String directory = Environment.getExternalStorageDirectory().toString();
         String path = "";
         File file = new File(directory, name);
 
-        try {
+        try
+        {
             outputStream = new FileOutputStream(file);
 
             // Compress image
@@ -37,7 +45,9 @@ public class SaveMeme {
             path = MediaStore.Images.Media.insertImage(contentResolver,
                     file.getAbsolutePath(), file.getName(), file.getName());
 
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
 
