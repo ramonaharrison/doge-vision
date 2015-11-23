@@ -10,12 +10,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
+
+/**
+ * Helper class for taking a Bitmap screenshot of the meme and saving it to the gallery.
+ */
+
 public class SaveMeme
 {
-
-    /**
-     * Helper class for taking a Bitmap screenshot of the meme and saving it to the gallery.
-     */
 
     public Bitmap loadBitmapFromView(FrameLayout view)
     {
